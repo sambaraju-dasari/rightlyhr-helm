@@ -5,4 +5,4 @@ appname: ui-hrms
 subdomain: hrms                        # 👈 This defines the subdomain
 imageTag: latest
 pullSecret: harbor-secret
-hostDomain: onpremise.cluster.govardhanreddy.xyz
+hostDomain: onpremise.cluster3.govardhanreddy.xyz
