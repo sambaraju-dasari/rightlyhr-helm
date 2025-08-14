@@ -1,0 +1,8 @@
+project: rightlyhr
+clientname: snad
+envname: dev
+appname: ui-hrms
+subdomain: hrms                        # 👈 This defines the subdomain
+imageTag: latest
+pullSecret: harbor-secret
+hostDomain: onpremise.cluster.govardhanreddy.xyz

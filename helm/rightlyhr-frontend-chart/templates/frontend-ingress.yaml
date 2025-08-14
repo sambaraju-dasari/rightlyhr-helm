@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ printf "%s-%s-%s-%s-ingress" .Values.project .Values.clientname .Values.envname .Values.appname }}
+  namespace: {{ printf "%s-%s-%s" .Values.project .Values.clientname .Values.envname }}
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: {{ .Values.subdomain }}.{{ .Values.envname }}.{{ .Values.clientname }}.{{ .Values.hostDomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ printf "%s-%s-%s-%s-service" .Values.project .Values.clientname .Values.envname .Values.appname }}
+                port:
+                  number: 80

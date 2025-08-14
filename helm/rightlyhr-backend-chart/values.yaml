@@ -1,0 +1,30 @@
+project: rightlyhr
+clientname: snad
+envname: dev
+appname: middleware
+
+image:
+  repository: 10.10.56.33/rightlyhr-tes/middleware
+  tag: latest                # This will be overridden by Jenkins pipeline
+  pullSecret: harbor-secret
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+ingress:
+  enabled: true
+  
+
+env:
+  POSTGRES_CONN: "Host=10.10.56.33;Port=5432;Database=mydb;Username=admin;Password=admin123"
+  EUREKA_ENABLED: "false"
+  ASPNETCORE_ENVIRONMENT: "Development"

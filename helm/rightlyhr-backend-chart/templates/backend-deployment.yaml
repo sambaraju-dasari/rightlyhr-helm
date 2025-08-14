@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s-%s-%s" .Values.project .Values.clientname .Values.envname .Values.appname }}
+  namespace: {{ printf "%s-%s-%s" .Values.project .Values.clientname .Values.envname }}
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appname }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appname }}
+    spec:
+      containers:
+        - name: {{ .Values.appname }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /swagger/index.html
+              port: 80
+              initialDelaySeconds: 10
+              periodSeconds: 5
+              timeoutSeconds: 2
+              successThreshold: 1
+              failureThreshold: 3
+          env:
+            - name: ConnectionStrings__Postgres
+              value: {{ .Values.env.POSTGRES_CONN | quote }}
+            - name: Eureka__Client__Enabled
+              value: {{ .Values.env.EUREKA_ENABLED | quote }}
+            - name: ASPNETCORE_ENVIRONMENT
+              value: {{ .Values.env.ASPNETCORE_ENVIRONMENT | quote }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s-%s-%s-service" .Values.project .Values.clientname .Values.envname .Values.appname }}
+  namespace: {{ printf "%s-%s-%s" .Values.project .Values.clientname .Values.envname }}
+spec:
+  selector:
+    app: {{ .Values.appname }}
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: 80
+  type: {{ .Values.service.type }}
