@@ -5,7 +5,14 @@ metadata:
   namespace: {{ printf "%s-%s-%s" .Values.project .Values.clientname .Values.envname }}
   annotations:
     kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls.certresolver: cloudflare
 spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - {{ .Values.subdomain }}.{{ .Values.envname }}.{{ .Values.clientname }}.{{ .Values.hostDomain }}
+      secretName: ui-hrms-tls-secret
   rules:
     - host: {{ .Values.subdomain }}.{{ .Values.envname }}.{{ .Values.clientname }}.{{ .Values.hostDomain }}
       http:
